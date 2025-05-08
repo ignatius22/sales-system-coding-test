@@ -157,7 +157,7 @@ To set up and use this Acme Widget Co Basket System:
 
 1.  **Clone the Repository:** Obtain the source code by cloning the Git repository from GitHub:
     ```bash
-    git clone [https://github.com/ignatius22/sales-system-coding-test](https://github.com/ignatius22/sales-system-coding-test)
+    git clone https://github.com/ignatius22/sales-system-coding-test
     ```
 2.  **Navigate to the Directory:** Change your current directory in the terminal to the cloned repository:
     ```bash
