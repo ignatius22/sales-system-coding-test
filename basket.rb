@@ -1,38 +1,38 @@
-# Basket class to manage products, apply delivery rules, and special offers
+# Basket class to manage a shopping basket, apply discounts, and calculate delivery costs
 class Basket
-  # Product catalog with code, name, and price
+  # Product catalog: maps product codes to names and prices
   CATALOG = {
     'R01' => { name: 'Red Widget', price: 32.95 },
     'G01' => { name: 'Green Widget', price: 24.95 },
     'B01' => { name: 'Blue Widget', price: 7.95 }
   }.freeze
 
-  # Delivery cost rules based on basket subtotal
+  # Delivery rules: cost based on subtotal after discounts
   DELIVERY_RULES = [
-    { threshold: 90.00, cost: 0.00 },
-    { threshold: 50.00, cost: 2.95 },
-    { threshold: 0.00, cost: 4.95 }
+    { threshold: 90.00, cost: 0.00 }, # Free delivery for $90+
+    { threshold: 50.00, cost: 2.95 }, # $2.95 for $50-$89.99
+    { threshold: 0.00, cost: 4.95 }  # $4.95 for <$50
   ].freeze
 
-  # Special offer for red widgets: buy one, get second half price
+  # Special offers: defines discounts, e.g., buy one red widget, get second half price
   OFFERS = {
     'R01' => { type: :second_half_price, min_quantity: 2 }
   }.freeze
 
   def initialize
-    @items = []
+    @items = [] # List of product codes in the basket
   end
 
   # Add a product to the basket by its code
-  # @param product_code [String] the code of the product to add
+  # @param product_code [String] the product code (e.g., 'R01')
   # @raise [ArgumentError] if the product code is invalid
   def add(product_code)
     raise ArgumentError, "Invalid product code: #{product_code}" unless CATALOG.key?(product_code)
     @items << product_code
   end
 
-  # Calculate the total cost of the basket including discounts and delivery
-  # @return [Float] the total cost rounded to 2 decimal places
+  # Calculate the total cost including items, discounts, and delivery
+  # @return [Float] total cost rounded to 2 decimal places
   def total
     subtotal = calculate_subtotal
     discount = calculate_discount
@@ -42,48 +42,51 @@ class Basket
 
   private
 
-  # Calculate the subtotal of all items in the basket
-  # @return [Float] the sum of item prices
+  # Sum the prices of all items in the basket
+  # @return [Float] total price before discounts
   def calculate_subtotal
     @items.sum { |code| CATALOG[code][:price] }
   end
 
-  # Calculate discounts based on applicable offers
-  # @return [Float] the total discount amount
+  # Calculate discounts based on special offers
+  # @return [Float] total discount amount
   def calculate_discount
     discount = 0.0
-    # Count occurrences of each item manually for Ruby version compatibility
-    item_counts = @items.each_with_object(Hash.new(0)) { |code, counts| counts[code] += 1 }
+    # Count how many times each product appears
+    product_counts = @items.each_with_object(Hash.new(0)) { |code, counts| counts[code] += 1 }
 
     OFFERS.each do |product_code, offer|
-      next unless item_counts[product_code] >= offer[:min_quantity]
+      # Skip if not enough items for the offer
+      next unless product_counts[product_code] >= offer[:min_quantity]
 
       case offer[:type]
       when :second_half_price
-        # Count pairs of items to apply half-price discount on second item
-        pairs = item_counts[product_code] / 2
-        discount += (pairs * (CATALOG[product_code][:price] / 2)).round(2)
+        # Apply half-price discount for each pair of items
+        pairs = product_counts[product_code] / 2
+        discount_per_pair = (CATALOG[product_code][:price] / 2).round(2) # Round to avoid floating-point issues
+        discount += pairs * discount_per_pair
       end
     end
 
     discount
   end
 
-  # Calculate delivery cost based on basket subtotal after discounts
-  # @param subtotal [Float] the subtotal after discounts
-  # @return [Float] the delivery cost
-  def calculate_delivery(subtotal)
-    DELIVERY_RULES.find { |rule| subtotal >= rule[:threshold] }[:cost]
+  # Calculate delivery cost based on subtotal after discounts
+  # @param discounted_subtotal [Float] subtotal after discounts
+  # @return [Float] delivery cost
+  def calculate_delivery(discounted_subtotal)
+    DELIVERY_RULES.find { |rule| discounted_subtotal >= rule[:threshold] }[:cost]
   end
 end
 
-# Demonstration of basket functionality with test cases
+# Run test cases to verify basket functionality
+# Prints each test case's items, total, expected total, and pass/fail status
 if $PROGRAM_NAME == __FILE__
   test_cases = [
-    { items: ['B01', 'G01'], expected: 37.85 },
-    { items: ['R01', 'R01'], expected: 54.37 },
-    { items: ['R01', 'G01'], expected: 60.85 },
-    { items: ['B01', 'B01', 'R01', 'R01'], expected: 98.27 } # Note: $68.28 may be correct
+    { items: ['B01', 'G01'], expected: 37.85 },              # Blue + Green
+    { items: ['R01', 'R01'], expected: 54.37 },              # Two Reds with discount
+    { items: ['R01', 'G01'], expected: 60.85 },              # Red + Green
+    { items: ['B01', 'B01', 'R01', 'R01'], expected: 68.28 } # Two Blues + Two Reds
   ]
 
   test_cases.each_with_index do |test, index|
