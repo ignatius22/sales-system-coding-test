@@ -60,7 +60,7 @@ The `Basket` class employs the following private methods to encapsulate specific
 The Ruby code within `basket.rb` is crafted for optimal understanding and maintainability:
 
 -   **Modular Design:** The use of separate methods for distinct tasks (e.g., `calculate_subtotal` on line 47 of the original code) promotes a modular design, making the logic easier to follow and test independently.
--   **Clear Naming:** The code utilizes intuitive and descriptive names for variables and methods (e.g., `product_counts` on line 57 and `discount_per_pair` on line 65), clearly indicating their purpose within the system.
+-   **Clear Naming:** The code utilizes intuitive and descriptive names for variables and methods (e.g., `product_counts` on line 56 and `discount_per_pair` on line 66), clearly indicating their purpose within the system.
 -   **Concise Logic:** The discount calculation logic (lines 59-66) is implemented with clear and simplified steps, enhancing readability.
 -   **Explanatory Comments:** Strategic comments are included to guide readers through potentially complex logic (e.g., the comment on line 64: “Round to avoid floating-point issues”).
 -   **Ruby Idioms:** The code leverages common Ruby idioms such as `sum`, `find`, and `freeze`, which are familiar to Ruby developers and contribute to the overall readability and conciseness of the code.
@@ -149,7 +149,7 @@ To execute the `basket.rb` file and observe its behavior:
 
 ## Testing
 
-The `basket.rb` file includes a rudimentary test runner (as seen in lines 78-92 of the original code) that performs basic verification of the provided test cases. For a production environment, it is strongly recommended to develop a more comprehensive test suite using a dedicated Ruby testing framework such as RSpec. This would enable thorough testing of various scenarios, including edge cases (e.g., handling of invalid product codes, empty baskets), and ensure the long-term reliability and stability of the system as it evolves.
+The `basket.rb` file includes a rudimentary test runner (as seen in lines 84-90 of the original code) that performs basic verification of the provided test cases. For a production environment, it is strongly recommended to develop a more comprehensive test suite using a dedicated Ruby testing framework such as RSpec. This would enable thorough testing of various scenarios, including edge cases (e.g., handling of invalid product codes, empty baskets), and ensure the long-term reliability and stability of the system as it evolves.
 
 ## Installation
 
